@@ -22,10 +22,9 @@ library(ggrepel)
 library(topGO)
 library(clipr)
 
-# Here, we set the working directory to wherever the counts files are all housed:
+# Here, set the working directory to wherever the counts files are all housed:
 
-#setwd("/Volumes/HeintzBambi3/WORK/Vicky/DESeq_HPC/")
-setwd('/Users/mvmoya/Desktop/Temp/Bioinformatics/Seq_Counts_files/New Gprin3 vs Colgalt2/HPC/All IPs')
+setwd('My/working/directory')
 
 # This line gets a list of the files in the directory if they have the word "ID" in them:
 
@@ -36,14 +35,12 @@ sampleFiles <- grep("(Gprin3|Colgalt2|Glt25d2).*(Counts)", list.files(getwd()), 
 
 sampleCondition <- c('Colgalt2_ALS_WT_Pre_IP_1', 'Colgalt2_ALS_WT_Pre_IP_2', 'Colgalt2_ALS_WT_Pre_IP_3',
                      'Colgalt2_ALS_SOD_Pre_IP_1', 'Colgalt2_ALS_SOD_Pre_IP_2',
-                     'Colgalt2_ALS_SOD_Pre_IP_3', 'Colgalt2_ALS_WT_Post_IP_1',
-                     #'Colgalt2_ALS_WT_Post_IP_2', 
+                     'Colgalt2_ALS_SOD_Pre_IP_3', 'Colgalt2_ALS_WT_Post_IP_1', 
                      'Colgalt2_ALS_WT_Post_IP_3',
                      'Colgalt2_ALS_SOD_Post_IP_1', 'Colgalt2_ALS_SOD_Post_IP_2',
                      'Colgalt2_ALS_SOD_Post_IP_3', 'Colgalt2_ALS_WT_Post_IP_4',
                      'Colgalt2_ALS_SOD_Post_IP_4', 'Colgalt2_ALS_WT_Pre_Input',
                      'Colgalt2_ALS_SOD_Pre_Input', 'Colgalt2_ALS_WT_Post_Input',
-                     #'Colgalt2_ALS_SOD_Post_Input',
                      'Gprin3_Norm_M1_IP_1', 'Gprin3_Norm_M1_IP_2', 'Gprin3_Norm_M1_IP_3',
                      'Gprin3_Norm_M1_Input_1', 'Gprin3_Norm_M1_Input_2', 'Gprin3_Norm_M1_Input_3',
                      'Gprin3_Norm_Striat_IP_1', 'Gprin3_Norm_Striat_IP_2', 'Gprin3_Norm_Striat_IP_3',
@@ -184,14 +181,10 @@ striat_genes <- c('Drd1', 'Drd2')
 mito_genes <- c('Cox6c', 'Ndufa4', 'Cox6a1', 'Ndufb3', 'Uqcrh', 'Atp5g3')
 all_genes <- c(gprin_genes, colgalt_genes, L5b_genes, striat_genes, mito_genes)
 
-candidate_gprin <- c('Cdh24', 'Limk1', 'Lypd1', 'Matn2')
-candidate_colgalt <- c('Deptor', 'Sorcs1', 'Sorcs2', 'Tmem150c', 'Vat1l')
-candidate_both <- c('Parm1')
-
 # Here, we make a heatmap that clusters our samples by expression of genes of interest from above.
 # If you want to specify a new set of these genes, do that below:
 
-pheatmap(subset(norm_counts[,order(colnames(norm_counts))], rownames(norm_counts) %in% c(genes_of_interest, glial_genes, mito_genes)),
+pheatmap(subset(norm_counts[,order(colnames(norm_counts))], rownames(norm_counts) %in% c(genes_of_interest)),
          scale = 'row',
          color = colorRampPalette(c('black', 'mediumvioletred', 'darkorange', 'cornsilk'), space='rgb')(44), 
          cluster_cols = FALSE,
@@ -237,11 +230,7 @@ res_colgalt_pre_als <- getResults('group', 'Colgalt2WholeALSSODPreIP', 'Colgalt2
 
 res_colgalt_post_als <- getResults('group', 'Colgalt2WholeALSSODPostIP', 'Colgalt2WholeALSWTPostIP')
 
-# First, we specify which results we want to make MA plots for:
-
-oxphos_genes <- read.delim('/Users/mvmoya/Desktop/Temp/Bioinformatics/Seq_Counts_files/Mito gene Lists/Mito_ETC_OxPhos_genes_071216.txt', sep = '\t')[,1]
-apop_genes <- read.delim('/Users/mvmoya/Desktop/Temp/Bioinformatics/Seq_Counts_files/Mito gene Lists/Mito_apop_genes_071216.txt', sep = '\t')[1:22,1]
-er_stress_genes <- read.delim('/Users/mvmoya/Desktop/Temp/Bioinformatics/Seq_Counts_files/Mito gene Lists/ERStress_genes_072616.txt', sep = '\t')[,1]
+# MA plots:
 
 plot_my_MA <- function(name_of_res, p_to_use = 'padj', gene_list = NULL) {
   of_interest <- name_of_res
@@ -256,7 +245,7 @@ plot_my_MA <- function(name_of_res, p_to_use = 'padj', gene_list = NULL) {
     points(of_interest[gene_list,], col = 'yellow', pch = 16, cex = 0.6)
   }
   
-  #text(of_interest[oxphos_genes,], labels = mito_genes, col = 'green', pos = 4, cex = 0.6, font = 2)
+  #text(of_interest[gene_list,], labels = mito_genes, col = 'green', pos = 4, cex = 0.6, font = 2)
 }
 
 plot_my_bar <- function(name_of_res, p_to_use = 'padj', gene_list = NULL) {
@@ -272,7 +261,7 @@ plot_my_bar <- function(name_of_res, p_to_use = 'padj', gene_list = NULL) {
 # Now we plot the MA plot from these results,
 # Coloring the genes with an adjusted pvalue less than 0.05 pink:
 
-plot_my_MA(res_M1_gprin_colgalt, p_to_use='padj', gene_list = list(c('Vat1l', 'Tmem150c'), c('Lypd1', 'Ust')))
+plot_my_MA(res_M1_gprin_colgalt, p_to_use='padj', gene_list = genes_of_interest)
 
 plot_my_bar(res_gprin_post_als, 'pvalue', apop_genes)
 
@@ -281,40 +270,15 @@ plot_my_bar(res_gprin_post_als, 'pvalue', apop_genes)
 oi <- res_M1_gprin_colgalt
 write_clip(rownames(oi[(oi$pvalue < 0.1 & oi$log2FoldChange < 0),]))
 
-# Below shows the list of genes that are enriched in both Gprin IP over input and Gprin over Colgalt (more stringent marker selection):
-
-intersect(rownames(res_M1_gprin_colgalt[(res_M1_gprin_colgalt$padj < 0.05 & res_M1_gprin_colgalt$log2FoldChange > 1),]),
-          rownames(res_M1_gprin_IP_input[res_M1_gprin_IP_input$padj < 0.05 & res_M1_gprin_IP_input$log2FoldChange > 1]))
-
-# This is an optional bar plot:
-
-rowsoi <- oi[c('Vat1l', 'Tmem150c', 'Lypd1', 'Ust'),]
-barplot(rowsoi$log2FoldChange,
-        names.arg = c('Vat1l', 'Tmem150c', 'Lypd1', 'Ust'),
-        col = c('purple', 'green')[as.factor(rowsoi$log2FoldChange > 0)],
-        main = 'Log2FoldChange of marker genes',
-        cex.names = 0.6)
-        #ylim = c(-2, 2))
-
 # Now we write the txt file with our results. We'll add the individual log counts for each replicate:
 
 ind_counts <- as.data.frame(assay(rld))
 relevant_cols <- ind_counts[,grep('IP', colnames(ind_counts))]
 all_data <- merge(of_interest, relevant_cols, by ='row.names')
 
-write.table(all_data, file = 'Gprin3_all3reps_vs_Colgalt2_all3reps_080619.txt', sep ='\t', row.names = FALSE, col.names = TRUE)
+write.table(all_data, file = 'output.txt', sep ='\t', row.names = FALSE, col.names = TRUE)
 
 # The End!
-
-
-newCol <- strsplit(as.vector(coldata$sample_type),"_") %>% 
-  unlist %>% 
-  matrix(ncol=2,byrow=TRUE) %>% 
-  as.data.frame %>% 
-  mutate(MouseLine=V1,IP=V2) %>% 
-  select(-V1,-V2)
-
-colData(dds) <- newCol
 
 ddss <- DESeqDataSetFromMatrix(counts(dds,normalized=FALSE),
                                colData=newCol,
