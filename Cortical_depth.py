@@ -4,6 +4,7 @@
 ## line with the reference ROI line. The functions called in the program are at the top.
 ## Please note that before running the program, the first ROI line must already be drawn. Have fun.
 ## Java-Python (Jython) sucks.
+## This is an ImageJ plugin.
 
 import java.lang.Math as math
 import ij.measure as measure
