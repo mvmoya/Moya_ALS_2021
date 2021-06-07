@@ -9,6 +9,7 @@
 ## Again, the program works best when pixel resolution was carried over in microns. If not,
 ## the estimation of the seams will be totally off.
 ## Good luck and happy stitching!
+## This is an ImageJ plugin
 
 import ij.plugin as plugin
 import ij.gui as gui
