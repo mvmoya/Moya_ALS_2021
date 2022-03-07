@@ -226,7 +226,7 @@ for i in range(int(yTiles)):
 		
 		tempRoi = gui.Roi(xMin, yMin, xMax, yMax)
 		roiImage = imp.setRoi(tempRoi, False)
-		duped = imp.duplicate()
+		duped = imp.crop(roiImage)
 		dupedProcessor = duped.getProcessor()
 		finalStack.addSlice(dupedProcessor)
 
